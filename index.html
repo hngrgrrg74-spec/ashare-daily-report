@@ -3,99 +3,472 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>A股市场日报 | 智能复盘工具</title>
+<title>A股市场日报 — 智能量化复盘 · 全自动推送</title>
+<meta name="description" content="A股市场日报 — 每个交易日08:00自动生成四大指数追踪、资金流向、CASI情绪指标、要闻简报的智能复盘报告，五智能体协同完成从数据采集到PDF生成全链路。">
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --red: #e02020;
+    --green: #00a854;
+    --bg: #fafbfc;
+    --card: #ffffff;
+    --text: #1a1a2e;
+    --text-muted: #6b7280;
+    --border: #e5e7eb;
+    --accent: #e02020;
+    --accent-light: #fef2f2;
+    --blue: #1d4ed8;
+    --blue-light: #eff6ff;
+    --shadow: 0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+    --shadow-lg: 0 10px 40px rgba(0,0,0,.08);
+  }
+  * { margin:0; pad:0; box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
   body {
-    font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
-    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
+    font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Noto Sans SC', sans-serif;
+    color: var(--text);
+    background: var(--bg);
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
   }
-  .card {
-    background: #fff;
-    border-radius: 16px;
-    padding: 48px 40px;
-    max-width: 640px;
-    width: 100%;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+
+  /* ── Nav ── */
+  .nav {
+    position: sticky; top:0; z-index:100;
+    background: rgba(255,255,255,.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
   }
-  .logo { font-size: 48px; margin-bottom: 16px; }
-  h1 { font-size: 28px; color: #1a1a1a; margin-bottom: 8px; }
-  .subtitle { font-size: 16px; color: #666; margin-bottom: 32px; }
-  .feature {
-    display: flex;
-    align-items: flex-start;
-    padding: 12px 0;
-    border-bottom: 1px solid #f0f0f0;
+  .nav-inner {
+    max-width: 1100px; margin:0 auto;
+    display:flex; align-items:center; justify-content:space-between;
+    padding: 14px 24px;
   }
-  .feature:last-child { border-bottom: none; }
-  .feature-icon { font-size: 24px; margin-right: 12px; min-width: 32px; text-align: center; }
-  .feature-text h3 { font-size: 16px; color: #333; margin-bottom: 4px; }
-  .feature-text p { font-size: 14px; color: #888; }
-  .footer {
-    margin-top: 32px;
-    padding-top: 16px;
-    border-top: 1px solid #f0f0f0;
-    font-size: 13px;
-    color: #aaa;
-    text-align: center;
+  .nav-brand { display:flex; align-items:center; gap:10px; font-size:18px; font-weight:700; color:var(--text); text-decoration:none; }
+  .nav-brand .icon { font-size:26px; }
+  .nav-links { display:flex; gap:28px; list-style:none; }
+  .nav-links a { color:var(--text-muted); text-decoration:none; font-size:14px; transition:color .2s; }
+  .nav-links a:hover { color:var(--accent); }
+
+  /* ── Hero ── */
+  .hero {
+    max-width: 1100px; margin:0 auto;
+    padding: 80px 24px 60px;
+    text-align:center;
   }
-  .footer a { color: #e6162d; text-decoration: none; }
+  .hero-badge {
+    display:inline-block; padding:6px 16px;
+    background:var(--accent-light); color:var(--accent);
+    border-radius:20px; font-size:13px; font-weight:600; margin-bottom:20px;
+  }
+  .hero h1 { font-size:44px; font-weight:800; letter-spacing:-.5px; margin-bottom:16px; }
+  .hero h1 .hl { color:var(--accent); }
+  .hero-desc { font-size:18px; color:var(--text-muted); max-width:600px; margin:0 auto 36px; }
+  .hero-stats {
+    display:flex; justify-content:center; gap:48px;
+    margin-top:48px; flex-wrap:wrap;
+  }
+  .hero-stat { text-align:center; }
+  .hero-stat .num { font-size:36px; font-weight:800; }
+  .hero-stat .label { font-size:13px; color:var(--text-muted); margin-top:4px; }
+  .hero-stat .num.red { color:var(--accent); }
+  .hero-stat .num.green { color:var(--green); }
+  .hero-stat .num.blue { color:var(--blue); }
+
+  /* ── Section ── */
+  section { padding: 64px 24px; }
+  .section-inner { max-width: 1100px; margin:0 auto; }
+  .section-tag { font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--accent); margin-bottom:8px; }
+  .section-title { font-size:32px; font-weight:700; margin-bottom:12px; }
+  .section-desc { font-size:16px; color:var(--text-muted); max-width:600px; margin-bottom:40px; }
+
+  /* ── Features ── */
+  #features { background: var(--card); }
+  .features-grid {
+    display:grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+  }
+  .feat-card {
+    background:var(--bg); border:1px solid var(--border);
+    border-radius:12px; padding:28px;
+    transition: box-shadow .2s, transform .2s;
+  }
+  .feat-card:hover { box-shadow:var(--shadow-lg); transform:translateY(-2px); }
+  .feat-card .icon { font-size:36px; margin-bottom:12px; display:block; }
+  .feat-card h3 { font-size:17px; margin-bottom:8px; }
+  .feat-card p { font-size:14px; color:var(--text-muted); }
+
+  /* ── Pipeline ── */
+  #how { background: var(--bg); }
+  .pipeline {
+    display:flex; align-items:center; justify-content:center;
+    flex-wrap:wrap; gap:16px; margin-top:32px;
+  }
+  .pipe-node {
+    background:var(--card); border:2px solid var(--border);
+    border-radius:12px; padding:20px 24px;
+    text-align:center; min-width:150px;
+  }
+  .pipe-node .icon { font-size:32px; display:block; margin-bottom:8px; }
+  .pipe-node .label { font-size:13px; font-weight:600; }
+  .pipe-node .sublabel { font-size:11px; color:var(--text-muted); }
+  .pipe-arrow { font-size:24px; color:var(--text-muted); }
+
+  /* ── Sample Report ── */
+  #sample { background: var(--card); }
+  .sample-grid {
+    display:grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 20px;
+  }
+  .sample-card {
+    border:1px solid var(--border); border-radius:12px;
+    overflow:hidden;
+  }
+  .sample-card-header {
+    padding:14px 18px; font-size:14px; font-weight:700;
+    border-bottom:1px solid var(--border);
+    display:flex; align-items:center; gap:8px;
+  }
+  .sample-card-body { padding:18px; }
+  .sample-row {
+    display:flex; justify-content:space-between; align-items:center;
+    padding:6px 0; font-size:14px;
+  }
+  .sample-row .name { color:var(--text-muted); }
+  .sample-row .val { font-weight:600; }
+  .sample-row .val.up { color:var(--accent); }
+  .sample-row .val.down { color:var(--green); }
+
+  .sample-table {
+    width:100%; border-collapse:collapse; font-size:13px;
+  }
+  .sample-table th {
+    text-align:left; padding:6px 8px; font-weight:600;
+    border-bottom:2px solid var(--border); color:var(--text-muted);
+  }
+  .sample-table td {
+    padding:6px 8px; border-bottom:1px solid var(--border);
+  }
+
+  /* ── Tech Stack ── */
+  #tech { background: var(--bg); }
+  .tech-grid {
+    display:grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap:16px;
+  }
+  .tech-tag {
+    border:1px solid var(--border); border-radius:8px;
+    padding:12px 16px; text-align:center; font-size:14px; font-weight:600;
+    background: var(--card);
+  }
+
+  /* ── FAQ ── */
+  #faq { background: var(--card); }
+  .faq-list { max-width: 720px; }
+  .faq-item { border-bottom: 1px solid var(--border); padding: 20px 0; }
+  .faq-item:first-child { padding-top:0; }
+  .faq-q { font-weight:700; font-size:16px; margin-bottom:8px; }
+  .faq-a { font-size:14px; color:var(--text-muted); }
+
+  /* ── Footer ── */
+  footer {
+    background: #1a1a2e; color:#9ca3af;
+    padding:48px 24px 32px;
+  }
+  .footer-inner {
+    max-width:1100px; margin:0 auto;
+    display:flex; justify-content:space-between; align-items:center;
+    flex-wrap:wrap; gap:16px;
+  }
+  .footer-brand { display:flex; align-items:center; gap:8px; font-size:14px; color:#e5e7eb; }
+  .footer-links { display:flex; gap:24px; }
+  .footer-links a { color:#9ca3af; text-decoration:none; font-size:13px; }
+  .footer-links a:hover { color:#fff; }
+  .footer-bottom {
+    max-width:1100px; margin:24px auto 0; padding-top:24px;
+    border-top:1px solid #374151; font-size:12px; text-align:center;
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 768px) {
+    .hero h1 { font-size:30px; }
+    .nav-links { display:none; }
+    .hero-stats { gap:24px; }
+    .pipeline { flex-direction:column; }
+    .pipe-arrow { transform:rotate(90deg); }
+  }
 </style>
 </head>
 <body>
-<div class="card">
-  <div class="logo">📊</div>
-  <h1>A股市场日报</h1>
-  <p class="subtitle">每个交易日 08:00 自动复盘前一交易日市场表现</p>
 
-  <div class="feature">
-    <div class="feature-icon">📈</div>
-    <div class="feature-text">
-      <h3>四大指数追踪</h3>
-      <p>上证、深证、创业板、科创50 涨跌幅与成交量</p>
+<!-- Nav -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="#" class="nav-brand">
+      <span class="icon">📊</span> A股市场日报
+    </a>
+    <ul class="nav-links">
+      <li><a href="#features">功能</a></li>
+      <li><a href="#how">流程</a></li>
+      <li><a href="#sample">报告预览</a></li>
+      <li><a href="#tech">技术</a></li>
+      <li><a href="#faq">FAQ</a></li>
+      <li><a href="privacy.html">隐私</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-badge">🕗 交易日 08:00 自动推送</div>
+  <h1>你的<span class="hl">A股智能复盘</span>引擎</h1>
+  <p class="hero-desc">
+    每个交易日清晨，一份涵盖指数、资金、情绪、要闻的完整市场日报准时抵达你的飞书与微博 —— 全自动，零手动。
+  </p>
+  <div class="hero-stats">
+    <div class="hero-stat"><div class="num blue">4</div><div class="label">核心指数追踪</div></div>
+    <div class="hero-stat"><div class="num red">500+</div><div class="label">行业板块监控</div></div>
+    <div class="hero-stat"><div class="num green">5</div><div class="label">智能体协同</div></div>
+    <div class="hero-stat"><div class="num blue">365</div><div class="label">天不间断运行</div></div>
+  </div>
+</section>
+
+<!-- Features -->
+<section id="features">
+  <div class="section-inner">
+    <div class="section-tag">核心功能</div>
+    <div class="section-title">一份日报，覆盖决策全维度</div>
+    <p class="section-desc">从宏观指数到微观资金，从技术情绪到消息面，五分钟读完前一日市场全貌。</p>
+    <div class="features-grid">
+
+      <div class="feat-card">
+        <span class="icon">📈</span>
+        <h3>四大指数追踪</h3>
+        <p>上证指数、深证成指、创业板指、科创50 —— 涨跌幅、成交量、振幅，完整覆盖A股核心基准。</p>
+      </div>
+
+      <div class="feat-card">
+        <span class="icon">💰</span>
+        <h3>资金流向全景</h3>
+        <p>北向资金（沪股通/深股通）净流入流出实时画像，行业板块资金运动一目了然。</p>
+      </div>
+
+      <div class="feat-card">
+        <span class="icon">🧠</span>
+        <h3>CASI 市场情绪指标</h3>
+        <p>自研 Composite A-Share Sentiment Index，融合涨跌比、成交量比、连板高度等十余维度，量化多空力量对比。</p>
+      </div>
+
+      <div class="feat-card">
+        <span class="icon">📰</span>
+        <h3>要闻速览</h3>
+        <p>宏观经济政策、产业突破、国际市场联动——关键信息一页速览，无需海量阅读。</p>
+      </div>
+
+      <div class="feat-card">
+        <span class="icon">🏭</span>
+        <h3>板块轮动热力图</h3>
+        <p>申万一级行业涨跌排名，当日最强/最弱板块一目了然，辅助判断市场风格切换。</p>
+      </div>
+
+      <div class="feat-card">
+        <span class="icon">🤖</span>
+        <h3>五智能体协同</h3>
+        <p>数据采集→清洗→分析→排版→PDF生成→发布，全链路由五个专业AI Agent分工协作完成，保证日报质量稳定可靠。</p>
+      </div>
     </div>
   </div>
+</section>
 
-  <div class="feature">
-    <div class="feature-icon">💰</div>
-    <div class="feature-text">
-      <h3>资金流向分析</h3>
-      <p>北向资金、板块资金流入/流出全景</p>
+<!-- How it works -->
+<section id="how">
+  <div class="section-inner">
+    <div class="section-tag">工作流程</div>
+    <div class="section-title">五步自动化流水线</div>
+    <p class="section-desc">无需人工干预 —— 每日定时触发，智能体接力完成从原始数据到精美PDF的全链路。</p>
+    <div class="pipeline">
+      <div class="pipe-node">
+        <span class="icon">📡</span>
+        <div class="label">数据采集</div>
+        <div class="sublabel">东方财富 · 新浪财经</div>
+      </div>
+      <span class="pipe-arrow">→</span>
+      <div class="pipe-node">
+        <span class="icon">🧹</span>
+        <div class="label">数据清洗</div>
+        <div class="sublabel">去重 · 校验 · 对齐</div>
+      </div>
+      <span class="pipe-arrow">→</span>
+      <div class="pipe-node">
+        <span class="icon">📊</span>
+        <div class="label">量化分析</div>
+        <div class="sublabel">指标计算 · 情绪建模</div>
+      </div>
+      <span class="pipe-arrow">→</span>
+      <div class="pipe-node">
+        <span class="icon">📄</span>
+        <div class="label">PDF排版</div>
+        <div class="sublabel">模板渲染 · 图表嵌入</div>
+      </div>
+      <span class="pipe-arrow">→</span>
+      <div class="pipe-node">
+        <span class="icon">🚀</span>
+        <div class="label">多端发布</div>
+        <div class="sublabel">飞书 · 微博同步</div>
+      </div>
     </div>
   </div>
+</section>
 
-  <div class="feature">
-    <div class="feature-icon">🧠</div>
-    <div class="feature-text">
-      <h3>CASI 情绪指标</h3>
-      <p>自建综合市场情绪指数，量化多空力量</p>
+<!-- Sample Report -->
+<section id="sample">
+  <div class="section-inner">
+    <div class="section-tag">报告预览</div>
+    <div class="section-title">每日报告内容示意</div>
+    <p class="section-desc">以下是日报核心数据区域的典型样式（数据为示意，非真实行情）。</p>
+    <div class="sample-grid">
+
+      <!-- 指数卡片 -->
+      <div class="sample-card">
+        <div class="sample-card-header" style="background:var(--blue-light);color:var(--blue);">
+          📈 核心指数
+        </div>
+        <div class="sample-card-body">
+          <div class="sample-row"><span class="name">上证指数</span><span class="val up">3,342.19 <small>+0.84%</small></span></div>
+          <div class="sample-row"><span class="name">深证成指</span><span class="val up">10,982.55 <small>+1.12%</small></span></div>
+          <div class="sample-row"><span class="name">创业板指</span><span class="val up">2,245.30 <small>+1.57%</small></span></div>
+          <div class="sample-row"><span class="name">科创50</span><span class="val down">1,006.77 <small>-0.32%</small></span></div>
+        </div>
+      </div>
+
+      <!-- 资金流向 -->
+      <div class="sample-card">
+        <div class="sample-card-header" style="background:var(--accent-light);color:var(--accent);">
+          💰 北向资金
+        </div>
+        <div class="sample-card-body">
+          <div class="sample-row"><span class="name">沪股通</span><span class="val up">+38.52亿</span></div>
+          <div class="sample-row"><span class="name">深股通</span><span class="val up">+25.17亿</span></div>
+          <div class="sample-row"><span class="name">合计净流入</span><span class="val up" style="font-size:16px;">+63.69亿</span></div>
+          <div class="sample-row" style="margin-top:8px;"><span class="name" style="font-size:12px;">连续流入天数</span><span class="val" style="font-size:12px;">第 5 日</span></div>
+        </div>
+      </div>
+
+      <!-- 板块排行 -->
+      <div class="sample-card">
+        <div class="sample-card-header" style="background:#f0fdf4;color:var(--green);">
+          🏭 板块 TOP5
+        </div>
+        <div class="sample-card-body">
+          <table class="sample-table">
+            <tr><th>板块</th><th style="text-align:right;">涨跌幅</th></tr>
+            <tr><td>计算机</td><td style="text-align:right;color:var(--accent);">+3.21%</td></tr>
+            <tr><td>传媒</td><td style="text-align:right;color:var(--accent);">+2.87%</td></tr>
+            <tr><td>通信</td><td style="text-align:right;color:var(--accent);">+2.54%</td></tr>
+            <tr><td>电子</td><td style="text-align:right;color:var(--accent);">+2.11%</td></tr>
+            <tr><td>汽车</td><td style="text-align:right;color:var(--accent);">+1.93%</td></tr>
+          </table>
+        </div>
+      </div>
+
+      <!-- 情绪指标 -->
+      <div class="sample-card">
+        <div class="sample-card-header" style="background:#fefce8;color:#ca8a04;">
+          🧠 CASI 情绪
+        </div>
+        <div class="sample-card-body">
+          <div class="sample-row" style="font-size:16px;">
+            <span class="name">CASI 读数</span>
+            <span class="val" style="font-size:22px;">68.4</span>
+          </div>
+          <div style="margin-top:12px; background:#e5e7eb; border-radius:8px; height:8px; overflow:hidden;">
+            <div style="width:68.4%; height:100%; background:linear-gradient(90deg,var(--green),#fbbf24,var(--accent)); border-radius:8px;"></div>
+          </div>
+          <div style="display:flex; justify-content:space-between; font-size:11px; color:var(--text-muted); margin-top:4px;">
+            <span>恐慌 0</span><span>中性 50</span><span>狂热 100</span>
+          </div>
+          <div style="margin-top:10px; padding:8px; background:#fefce8; border-radius:6px; font-size:13px; color:#92400e;">
+            ⚠️ 偏乐观区间，注意追高风险
+          </div>
+        </div>
+      </div>
     </div>
   </div>
+</section>
 
-  <div class="feature">
-    <div class="feature-icon">📰</div>
-    <div class="feature-text">
-      <h3>要闻简报</h3>
-      <p>经济政治大事 + 行业突破，一页速览</p>
+<!-- Tech Stack -->
+<section id="tech">
+  <div class="section-inner">
+    <div class="section-tag">技术架构</div>
+    <div class="section-title">可靠的技术底座</div>
+    <p class="section-desc">基于成熟的开源生态和国产大模型构建，保证日报生成的稳定性与一致性。</p>
+    <div class="tech-grid">
+      <div class="tech-tag">🐍 Python 3.12</div>
+      <div class="tech-tag">📊 东方财富数据源</div>
+      <div class="tech-tag">📰 新浪财经接口</div>
+      <div class="tech-tag">🤖 五智能体流水线</div>
+      <div class="tech-tag">📄 WeasyPrint PDF引擎</div>
+      <div class="tech-tag">🔗 微博开放平台 API</div>
+      <div class="tech-tag">🕊️ 飞书消息推送</div>
+      <div class="tech-tag">☁️ GitHub Actions 定时</div>
+      <div class="tech-tag">🛡️ 数据多重校验</div>
+      <div class="tech-tag">📈 CASI 自研情绪模型</div>
+      <div class="tech-tag">🔐 OAuth 2.0 安全认证</div>
+      <div class="tech-tag">🌐 GitHub Pages 托管</div>
     </div>
   </div>
+</section>
 
-  <div class="feature">
-    <div class="feature-icon">🤖</div>
-    <div class="feature-text">
-      <h3>全自动运行</h3>
-      <p>五智能体协同完成数据采集、分析、PDF 生成与发布</p>
+<!-- FAQ -->
+<section id="faq">
+  <div class="section-inner">
+    <div class="section-tag">常见问题</div>
+    <div class="section-title">FAQ</div>
+    <div class="faq-list">
+      <div class="faq-item">
+        <div class="faq-q">Q: 日报什么时候推送？</div>
+        <div class="faq-a">每个交易日 08:00（北京时间）自动触发，复盘前一日市场。非交易日（周末/节假日）不推送。</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">Q: 数据来源可靠吗？</div>
+        <div class="faq-a">核心行情数据来自东方财富权威数据库和 SinaFinance API，经过多重校验与去重后使用。CASI 情绪指标为自研模型，仅供参考，不构成投资建议。</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">Q: 如何关注微博推送？</div>
+        <div class="faq-a">关注微博账号即可看到每日自动发布的日报摘要与图文长文。完整PDF版本通过飞书群推送。</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">Q: 日报内容是AI生成的吗？</div>
+        <div class="faq-a">报告数据全部来自真实行情接口，AI 负责数据清洗、指标计算、情绪建模和排版，而非凭空生成内容。分析结果保持在数据驱动范围内。</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">Q: 支持自定义指标吗？</div>
+        <div class="faq-a">当前日报模板为固定格式，但可通过飞书群反馈需求，后续版本会考虑增加可配置项。</div>
+      </div>
     </div>
   </div>
+</section>
 
-  <div class="footer">
-    基于新浪微博开放平台 <a href="https://open.weibo.com" target="_blank">open.weibo.com</a> 开发
+<!-- Footer -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <span style="font-size:20px;">📊</span> A股市场日报
+    </div>
+    <div class="footer-links">
+      <a href="privacy.html">隐私政策</a>
+      <a href="terms.html">服务条款</a>
+      <a href="https://open.weibo.com" target="_blank" rel="noopener">微博开放平台</a>
+      <a href="https://github.com/hngrgrrg74-spec/ashare-daily-report" target="_blank" rel="noopener">GitHub</a>
+    </div>
   </div>
-</div>
+  <div class="footer-bottom">
+    © 2026 A股市场日报 · 基于新浪微博开放平台构建 · 所有行情数据仅供参考，不构成投资建议
+  </div>
+</footer>
+
 </body>
 </html>
