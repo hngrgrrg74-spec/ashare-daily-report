@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A股市场日报 | 智能复盘工具</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+  }
+  .card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 48px 40px;
+    max-width: 640px;
+    width: 100%;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+  }
+  .logo { font-size: 48px; margin-bottom: 16px; }
+  h1 { font-size: 28px; color: #1a1a1a; margin-bottom: 8px; }
+  .subtitle { font-size: 16px; color: #666; margin-bottom: 32px; }
+  .feature {
+    display: flex;
+    align-items: flex-start;
+    padding: 12px 0;
+    border-bottom: 1px solid #f0f0f0;
+  }
+  .feature:last-child { border-bottom: none; }
+  .feature-icon { font-size: 24px; margin-right: 12px; min-width: 32px; text-align: center; }
+  .feature-text h3 { font-size: 16px; color: #333; margin-bottom: 4px; }
+  .feature-text p { font-size: 14px; color: #888; }
+  .footer {
+    margin-top: 32px;
+    padding-top: 16px;
+    border-top: 1px solid #f0f0f0;
+    font-size: 13px;
+    color: #aaa;
+    text-align: center;
+  }
+  .footer a { color: #e6162d; text-decoration: none; }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="logo">📊</div>
+  <h1>A股市场日报</h1>
+  <p class="subtitle">每个交易日 08:00 自动复盘前一交易日市场表现</p>
+
+  <div class="feature">
+    <div class="feature-icon">📈</div>
+    <div class="feature-text">
+      <h3>四大指数追踪</h3>
+      <p>上证、深证、创业板、科创50 涨跌幅与成交量</p>
+    </div>
+  </div>
+
+  <div class="feature">
+    <div class="feature-icon">💰</div>
+    <div class="feature-text">
+      <h3>资金流向分析</h3>
+      <p>北向资金、板块资金流入/流出全景</p>
+    </div>
+  </div>
+
+  <div class="feature">
+    <div class="feature-icon">🧠</div>
+    <div class="feature-text">
+      <h3>CASI 情绪指标</h3>
+      <p>自建综合市场情绪指数，量化多空力量</p>
+    </div>
+  </div>
+
+  <div class="feature">
+    <div class="feature-icon">📰</div>
+    <div class="feature-text">
+      <h3>要闻简报</h3>
+      <p>经济政治大事 + 行业突破，一页速览</p>
+    </div>
+  </div>
+
+  <div class="feature">
+    <div class="feature-icon">🤖</div>
+    <div class="feature-text">
+      <h3>全自动运行</h3>
+      <p>五智能体协同完成数据采集、分析、PDF 生成与发布</p>
+    </div>
+  </div>
+
+  <div class="footer">
+    基于新浪微博开放平台 <a href="https://open.weibo.com" target="_blank">open.weibo.com</a> 开发
+  </div>
+</div>
+</body>
+</html>
