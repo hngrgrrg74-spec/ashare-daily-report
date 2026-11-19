@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>隐私政策 — A股市场日报</title>
+<style>
+  :root { --bg: #fafbfc; --text: #1a1a2e; --text-muted: #6b7280; --border: #e5e7eb; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif; color: var(--text); background: var(--bg); line-height: 1.8; -webkit-font-smoothing: antialiased; }
+  .nav { background: rgba(255,255,255,.85); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: 14px 24px; display:flex; align-items:center; justify-content:space-between; max-width: 1100px; margin:0 auto; }
+  .nav a { color:var(--text); text-decoration:none; font-weight:700; font-size:16px; }
+  .container { max-width: 800px; margin: 0 auto; padding: 48px 24px; }
+  h1 { font-size: 32px; margin-bottom: 8px; }
+  .meta { color: var(--text-muted); font-size: 14px; margin-bottom: 32px; }
+  h2 { font-size: 20px; margin: 32px 0 12px; }
+  p { margin-bottom: 12px; color: var(--text-muted); }
+  ul { margin: 8px 0 16px 20px; color: var(--text-muted); }
+  li { margin-bottom: 6px; }
+  footer { background: #1a1a2e; color:#9ca3af; padding:24px; text-align:center; font-size:13px; }
+  footer a { color:#e5e7eb; }
+</style>
+</head>
+<body>
+<div class="nav">
+  <a href="index.html">📊 A股市场日报</a>
+  <span style="font-size:14px;color:var(--text-muted);">隐私政策</span>
+</div>
+<div class="container">
+  <h1>隐私政策</h1>
+  <p class="meta">最后更新日期：2026年11月19日</p>
+  <p>A股市场日报（以下简称"本服务"）高度重视用户隐私保护。本隐私政策说明我们如何收集、使用和保护您的信息。</p>
+  <h2>一、信息收集</h2>
+  <p>本服务为自动化市场数据报告生成与推送工具，不主动收集用户的个人身份信息（如姓名、手机号、身份证号等）。</p>
+  <p>在运行过程中可能涉及：</p>
+  <ul>
+    <li><strong>微博 OAuth 授权信息：</strong>用于调用微博开放平台 API 发布内容。Access Token 存储在本地加密配置中，不上传至第三方服务器。</li>
+    <li><strong>市场行情数据：</strong>从东方财富、新浪财经等公开数据源获取，不涉及用户个人数据。</li>
+    <li><strong>飞书推送配置：</strong>用于向指定飞书群/用户推送日报，仅存储必要的机器人 Webhook 地址和接收者标识。</li>
+  </ul>
+  <h2>二、信息使用</h2>
+  <p>收集的配置信息仅用于：</p>
+  <ul>
+    <li>驱动每日市场日报的自动生成与多端发布</li>
+    <li>调用微博开放平台 API 发布图文内容</li>
+    <li>通过飞书机器人推送 PDF 报告</li>
+  </ul>
+  <p>不会将任何配置信息或报告数据出售、转让或分享给第三方。</p>
+  <h2>三、信息存储</h2>
+  <ul>
+    <li>微博 Access Token 等凭据存储于本地加密配置文件，仅运行日报生成脚本时读取。</li>
+    <li>市场数据缓存为临时文件，定期清理。</li>
+    <li>本服务无外部数据库，所有数据存于用户控制的本地环境。</li>
+  </ul>
+  <h2>四、信息安全</h2>
+  <p>我们采取合理的技术措施保护信息免遭未经授权的访问、修改或泄露，包括：</p>
+  <ul>
+    <li>敏感凭据本地加密存储</li>
+    <li>微博 API 通信使用 HTTPS 加密传输</li>
+    <li>OAuth 2.0 标准授权流程</li>
+  </ul>
+  <h2>五、免责声明</h2>
+  <p>本服务输出的市场日报内容仅供参考，不构成任何投资建议。使用者应独立判断并承担投资风险。报告中的市场数据来源于公开接口，我们不对数据的准确性和完整性做出保证。</p>
+  <h2>六、政策更新</h2>
+  <p>我们可能不时更新本隐私政策。更新后将在本页面发布最新版本。</p>
+  <h2>七、联系方式</h2>
+  <p>如对本隐私政策有任何疑问，请通过 GitHub Issues 联系我们：<a href="https://github.com/hngrgrrg74-spec/ashare-daily-report/issues" style="color:#1d4ed8;">github.com/hngrgrrg74-spec/ashare-daily-report</a></p>
+</div>
+<footer>
+  © 2026 A股市场日报 · <a href="index.html">返回首页</a> · <a href="terms.html">服务条款</a>
+</footer>
+</body>
+</html>
